@@ -2,7 +2,8 @@
   "name": "origin-link",
   "displayName": "origin-link",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.5",
+  "publisher": "vbrazelton",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vbrazelton/origin-link.git"
