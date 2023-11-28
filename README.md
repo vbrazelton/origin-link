@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/logo.webp" alt="Origin-Link Logo" width="300"/>
+</p>
+
 # Origin Link
 
 A Visual Studio Code extension that allows users to create a link to the remote origin of a selected line or range of code.
@@ -32,4 +36,4 @@ If you find any issues or have a feature request, please open an issue on the [G
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
