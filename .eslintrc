@@ -1,0 +1,385 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint-config-airbnb-base",
+    "plugin:import/typescript",
+    "plugin:jest/recommended"
+  ],
+  "rules": {
+    "import/no-cycle": [
+      2,
+      {
+        "maxDepth": 1
+      }
+    ],
+    "import/export": 1,
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "ts": "never"
+      }
+    ],
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "_id"
+        ]
+      }
+    ],
+    // There was an error being shown because NodeJS was used in the open-telemetry.ts. 
+    // This discussion here explained that the rule is mainly for JS not TS, so we can safely turn off the error. https://github.com/Chatie/eslint-config/issues/45
+    "no-undef": "off",
+    // errors - will be output, and will fail the build.
+    // disallow space in array brackets.
+    "array-bracket-spacing": [
+      "error",
+      "never"
+    ],
+    // require the use of braces around arrow function body
+    "arrow-body-style": [
+      "error",
+      "always"
+    ],
+    // require parentheses in arrow functions always.  if an arrow function has no parameters or
+    // more than one parameter, parentheses are required anyway, so there is no good reason to
+    // not use them when there is only one parameter.
+    "arrow-parens": [
+      "error",
+      "always"
+    ],
+    // require spaces around the arrow in arrow functions.
+    "arrow-spacing": [
+      "error",
+      {
+        "before": true,
+        "after": true
+      }
+    ],
+    // require the brace style where the '{' is on the same line as the statement, and the '}'
+    // is on its own line.  also, either everything is on one line, or everything is on its own
+    // line.
+    "brace-style": [
+      "error",
+      "stroustrup",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    // disallow dangling commas.
+    "comma-dangle": "off",
+    // require a space after a comma and no space before.
+    "comma-spacing": [
+      "error",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    // require commas in object or array definitions and variable declarations to be at the end
+    // of each line.
+    "comma-style": [
+      "error",
+      "last"
+    ],
+    // disallow space in computed property names.
+    "computed-property-spacing": [
+      "error",
+      "never"
+    ],
+    // require braces.
+    "curly": "error",
+    // require all switch statements to either have a default case or the comment // no default
+    // after the last case to indicate that there is no default.
+    "default-case": "error",
+    // require === and !== instead of == and !=.
+    "eqeqeq": "error",
+    // require for-in statements to have a nested if check for hasOwnProperty.
+    "guard-for-in": "error",
+    // require at least one space after the ':' in an object definition, but not before.
+    "key-spacing": [
+      "error",
+      {
+        "beforeColon": false,
+        "afterColon": true,
+        "mode": "minimum"
+      }
+    ],
+    // require space around keywords (`if`, `for`, etc.).
+    "keyword-spacing": "error",
+    // use Unix line endings.
+    "linebreak-style": "error",
+    // require constructors to be capitalized.
+    "new-cap": "error",
+    // require parentheses when creating a new object.  e.g.:
+    //     let d = new Date;   // don't do this.
+    //     let d = new Date(); // do this instead.
+    "new-parens": "error",
+    // disallow arguments.caller and arguments.callee.  should be redundant since we are using
+    // strict mode, and these properties aren't allowed in strict mode.
+    "no-caller": "error",
+    // disallow reassigning classes.
+    "no-class-assign": "error",
+    // disallow calling eval.
+    "no-eval": "error",
+    // disallow extending native objects.
+    "no-extend-native": "error",
+    // disallow bare decimal points in floating point numbers.  e.g.:
+    //     let x = .7;  // don't do this.
+    //     let x = 0.7; // do this instead.
+    "no-floating-decimal": "error",
+    // disallow implicit conversion.  e.g.:
+    //     let x; // has some value.
+    //     let num = +x; // converts x to a number.
+    //     let str = '' + x; // converts x to a string.
+    // use explicit conversion instead.  e.g.:
+    //     let x; // has some value.
+    //     let num = Number(x); // converts x to a number.
+    //     let str = String(x); // converts x to a string.
+    // however, we are allowing !! to convert to boolean.
+    "no-implicit-coercion": [
+      "error",
+      {
+        "boolean": false,
+        "number": true,
+        "string": true
+      }
+    ],
+    // disallow an `if` statement that is the only statement in an `else` block, since it can be
+    // better written as an `else if` statement.
+    "no-lonely-if": "error",
+    // disallow defining functions within loops.
+    "no-loop-func": "error",
+    // disallow requires to be mixed with regular variables.
+    "no-mixed-requires": "error",
+    // disallow multi-line strings.  these are strings where newlines are embedded directly in
+    // the string and escaped with '\'.  e.g.:
+    //     let bad = 'this is a\
+    //     multiline string';
+    // if you want a string to contain a newline, put it in as '\n':
+    //     let good = 'this is a\n' +
+    //         'multiline string';
+    // or use a template literal:
+    //     let alsoGood = `this is a
+    //     multiline string`;
+    "no-multi-str": "error",
+    // disallow multiple blank lines in succession.  a single blank line can separate blocks
+    // just fine.  there is also no reason for blank lines at the very top or bottom of a file.
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxBOF": 0,
+        "maxEOF": 0
+      }
+    ],
+    // disallow reassigning native objects.
+    "no-native-reassign": "error",
+    // disallow creating a new object that isn't assigned to a variable.
+    "no-new": "error",
+    // disallow calling `new` directly on `require`.  assign the `require` to a variable (with a
+    // capitalized name as per new-cap) then call `new` on that.
+    "no-new-require": "error",
+    // disallow creating Boolean, Number, or String objects.  instead, invoke those functions
+    // directly to return the corresponding primitives.  e.g.:
+    //     let x = new Number('5'); // don't do this.
+    //     let y = Number('5');     // do this instead.
+    "no-new-wrappers": "error",
+    // disallow string contatentation with `__dirname` and `__filename`.  use `path.concat()`
+    // instead.
+    "no-path-concat": "error",
+    // disallow direct usage of `process.env`.  this will be disabled in settings files, since
+    // we build settings from environment variables, but everything else should be using values
+    // from settings files, not the environment directly.
+    "no-process-env": "error",
+    // disallow assigning a variable in a return statement.  assign the value you want to the
+    // variable, then return it.
+    "no-return-assign": "error",
+    // disallow unnecessary return await. since the return value of an async function is always
+    // wrapped in Promise.resolve, return await doesn’t actually do anything except add extra
+    // time before the overarching Promise resolves or rejects
+    "no-return-await": "error",
+    // disallow comparing a variable to itself.  this is usually meaningless.
+    "no-self-compare": "error",
+    // disallow multiple statements separated by a ',', with the exception of the declarations
+    // in a for loop.
+    "no-sequences": "error",
+    // disallow restricted names to be shadowed by local variables.
+    "no-shadow-restricted-names": "error",
+    // disallow throwing literal values.  only `Error`s should be thrown.
+    "no-throw-literal": "error",
+    // disallow trailing whitespace at the end of lines.
+    "no-trailing-spaces": "error",
+    // disallow using a variable before it is defined, except for functions since they will be
+    // hoisted.
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ],
+    // disallow the `with` statement.
+    "no-with": "error",
+    // disallow using `var`, use `let` and `const` instead.
+    "no-var": "error",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-shadow": "off",
+    // require consistent spacing inside braces of object literals, destructuring assignments,
+    // and import/export specifiers
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    // require operators in a statement that spans multiple lines to be at the end of each line.
+    // e.g.:
+    //     let bad = "don't do"
+    //         + 'this';
+    //     let good = 'do this' +
+    //         'instead';
+    "operator-linebreak": [
+      "error",
+      "after"
+    ],
+    // disallow whitespace at the beginning or end of blocks.
+    "padded-blocks": [
+      "error",
+      "never"
+    ],
+    // require arrow functions to be used as callbacks, unless the function is a named function.
+    "prefer-arrow-callback": [
+      "error",
+      {
+        "allowNamedFunctions": true
+      }
+    ],
+    // require using the array spread operator to invoke a function with an array of arguments,
+    // instead of passing that array of arguments to the function's `apply` method.  e.g.:
+    //     let args;        // some array of arguments.
+    //     let foo;         // some function you want to invoke with args.
+    //     foo.apply(args); // don't do this.
+    //     foo(...args);    // do this instead.
+    "prefer-spread": "error",
+    "import/prefer-default-export": "off",
+    // require the use of single quotes, except allow double quotes to avoid having to escape
+    // single quotes, and also allow template literals.
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
+    ],
+    // require a radix parameter when using `parseInt`.  if the radix is 10, you are better off
+    // using `Number` anyway.
+    "radix": "error",
+    // require semicolons.
+    "semi": [
+      "error",
+      "always"
+    ],
+    // require a space after semicolons when multiple statements are on one line, but no space
+    // before.
+    "semi-spacing": [
+      "error",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    // require a space before a block.
+    "space-before-blocks": [
+      "error",
+      "always"
+    ],
+    // require a space before the '(' in anonymous functions and arrow functions, but disallow a
+    // space before the '(' in named functions.
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    // disallow leading and trailing spaces in parentheses.
+    "space-in-parens": "error",
+    // require spaces around infix operators like + and *.
+    "space-infix-ops": "error",
+    // disallow spaces around unary operarors like ! and -, but require spaces around keywords
+    // like `new` and `delete`.  but then, as per my personal preference, disallow space around
+    // `typeof`, so you can do `typeof(x)`.
+    "space-unary-ops": [
+      "error",
+      {
+        "words": true,
+        "nonwords": false,
+        "overrides": {
+          "typeof": false
+        }
+      }
+    ],
+    // require strict mode everywhere.
+    "strict": "error",
+    // require immediately invoked functions to be wrapped.  e.g.:
+    //     function () { ... }();   // don't do this.
+    //     (function () { ... })(); // do this instead.
+    "wrap-iife": [
+      "error",
+      "inside"
+    ],
+    "@typescript-eslint/no-shadow": "error",
+    // warnings - will be output, but won't fail the build.
+    // require every return statement in a function to return something or nothing, don't mix
+    // and match.  set to a warning because when using Promises it can sometimes be difficult to
+    // do this.
+    "consistent-return": "warn",
+    // require lines of code to be no more than 100 characters long. set to a warning because
+    // this can be difficult to manage and we've been guilty of this in the past.
+    "max-len": [
+      "warn",
+      150
+    ],
+    // disallow unused variables, but allow unused function arguments.  set to a warning because
+    // I personally think declaring all arguments to a function, even if they are never used, is
+    // better than only declaring the ones you need, because then you always know exactly what
+    // data is available to you.  if you only declare the arguments you need, and in the future
+    // you find you need another piece of data, you might jump through hoops to get that data,
+    // while unbeknownst to you that data is already being passed to the function, but since you
+    // didn't declare all the arguments, you didn't know about it.  it is possible that I can be
+    // convinced to disallow all unused variables and make it an error, if we can agree that all
+    // function arguments should be declared, but unused ones commented out.  something like:
+    //     function (neededVar, otherNeededVar/*, unneededVar, otherUnneededVar*/) {...}
+    "no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "args": "none"
+      }
+    ],
+    // require variables to be declared with const unless they need to be reassigned, in which
+    // case they must be declared with let.  set to a warning because in my opinion this is more
+    // of a feel-good thing.  what I mean is, the argument in favor of this is that declaring a
+    // variable with const lets the reader know the variable is never reassigned.  but I think
+    // whether a variable *is* reassigned isn't necessarily related to whether it is *intended*
+    // to be reassigned.  declaring a variable with const means you are making a decision to set
+    // a value that cannot be changed.  however, declaring a variable with let and assigning it
+    // a value but then never changing it, doesn't mean you never intended to change it.
+    "prefer-const": "warn",
+    // off - won't be output.
+    // this is off because turning it on means dot notation should be used whenever possible,
+    // but I personally think it should be used in an object context but not in a map context.
+    // that is, if you have some variable `foo`, and `foo` is an instance of some object (i.e.,
+    // you created it with `let foo = new Foo()`) and it has a property called `bar`, you should
+    // access it as `foo.bar`; but if `foo` is just an object you are using as a map (i.e., you
+    // created it with `let foo = {}`), you should instead refer to `bar` as `foo['bar']` since
+    // in this case `bar` isn't so much a property of `foo` as it is a key in a map.
+    "dot-notation": "off"
+  }
+}
