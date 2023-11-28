@@ -2,6 +2,12 @@ import {execSync} from 'child_process';
 import * as vscode from 'vscode';
 import { OriginSource } from '../models/origins';
 
+/**
+ * Retrieves the Git origin URL and current branch for a given workspace folder.
+ * @param workspaceFolder The path to the workspace folder.
+ * @returns A promise that resolves to an object containing the origin URL and branch name.
+ *          If the origin URL or branch cannot be determined, they will be undefined.
+ */
 export const getGitOrigin = async (workspaceFolder: string): Promise<{ origin: string | undefined; branch: string | undefined }> => {
     try {
         const originStdout = execSync('git config --get remote.origin.url', { cwd: workspaceFolder });
@@ -63,6 +69,10 @@ export const getGitOrigin = async (workspaceFolder: string): Promise<{ origin: s
     }
 };
 
+/**
+ * Retrieves information about the origin, file path, and head branch of the active text editor in the workspace.
+ * @returns A promise that resolves to an object containing the file path, git origin, and head branch, or null if the information cannot be retrieved.
+ */
 export const getOriginInfo = async (): Promise<{filePath: string, gitOrigin: string, headBranch: string} | null> => {
 
 	if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0){
