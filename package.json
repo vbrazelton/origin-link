@@ -2,7 +2,7 @@
   "name": "origin-link",
   "displayName": "origin-link",
   "description": "",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "publisher": "vbrazelton",
   "repository": {
     "type": "git",
@@ -14,6 +14,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "assets/logo-thumbnail.png",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
