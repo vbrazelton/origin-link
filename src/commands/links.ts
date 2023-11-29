@@ -2,6 +2,10 @@ import * as vscode from "vscode";
 import { OriginSource } from "../models/origins";
 import { getOriginSource } from "./git";
 
+const removeUsernameFromGitUrl = (url: string) => {
+  return url.replace(/(https?:\/\/)[^\/]+@/, "$1");
+};
+
 /**
  * Creates a link based on the origin information and selections.
  * @param originInfo - The origin information containing the file path, git origin, and head branch.
@@ -33,14 +37,23 @@ export const createLink = (
       .replace("git@", "");
   }
 
+  if (url.startsWith("git@")) {
+    url = url.replace(/:/g, "/").replace("git@", "https://");
+  }
+
+  url = removeUsernameFromGitUrl(url);
+
   const urlParts = url
-  .replace("//", "/") // remove double slashes so that we can split on single slash
-  .replace(/\/$/, "") // remove trailing slash
-  .replace(/\.git?$/, "") // remove .git or .git/ from the end
-  .split("/");
+    .replace("//", "/") // remove double slashes so that we can split on single slash
+    .replace(/\/$/, "") // remove trailing slash
+    .replace(/\.git?$/, "") // remove .git or .git/ from the end
+    .split("/");
 
   switch (gitOriginSource) {
-    case "bitbucket":
+    case "bitbucket.org":
+      console.log("urlParts: ", urlParts);
+      return `${urlParts[0]}//${urlParts[1]}/${urlParts[2]}/${urlParts[3]}/src/${originInfo.headBranch}${originInfo.filePath}#${ranges}`;
+    case "self-hosted-bitbucket":
       return `${urlParts[0]}//${urlParts[1]}/projects/${urlParts[3]}/${urlParts[4]}/${urlParts[5]}/browse${originInfo.filePath}#${ranges}`;
     case "github":
       return `${urlParts[0]}//${urlParts[1]}/${urlParts[2]}/${urlParts[3]}/blob/${originInfo.headBranch}${originInfo.filePath}#${ranges}`;
@@ -59,25 +72,42 @@ export const getRanges = (
   selections: readonly vscode.Selection[],
   originSource: OriginSource
 ): string => {
-  if (originSource === "github") {
-    return selections
-      .map((selection: vscode.Selection) => {
-        if (selection.isSingleLine) {
-          return `L${selection.start.line + 1}`;
-        } else {
-          return `L${selection.start.line + 1}-L${selection.end.line + 1}`;
-        }
-      })
-      .join(",");
-  } else {
-    return selections
-      .map((selection: vscode.Selection) => {
-        if (selection.isSingleLine) {
-          return `${selection.start.line + 1}`;
-        } else {
-          return `${selection.start.line + 1}-${selection.end.line + 1}`;
-        }
-      })
-      .join(",");
+  switch (originSource) {
+    case "github":
+      return selections
+        .map((selection: vscode.Selection) => {
+          if (selection.isSingleLine) {
+            return `L${selection.start.line + 1}`;
+          } else {
+            return `L${selection.start.line + 1}-L${selection.end.line + 1}`;
+          }
+        })
+        .join(",");
+    case "bitbucket.org":
+      return selections
+        .map((selection: vscode.Selection, index) => {
+          if (selection.isSingleLine) {
+            return `lines-${selection.start.line + 1}`;
+          } else {
+            if (index === 0) {
+              return `lines-${selection.start.line + 1}:${
+                selection.end.line + 1
+              }`;
+            } else {
+              return `${selection.start.line + 1}:${selection.end.line + 1}`;
+            }
+          }
+        })
+        .join(",");
+    default:
+      return selections
+        .map((selection: vscode.Selection) => {
+          if (selection.isSingleLine) {
+            return `${selection.start.line + 1}`;
+          } else {
+            return `${selection.start.line + 1}-${selection.end.line + 1}`;
+          }
+        })
+        .join(",");
   }
 };
