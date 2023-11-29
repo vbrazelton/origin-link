@@ -32,7 +32,13 @@ No additional configuration is needed.
 
 ## Contributing
 
-If you find any issues or have a feature request, please open an issue on the [GitHub repository](<link-to-your-github-repo>).
+If you find any issues or have a feature request, please open an issue on the [GitHub repository](https://github.com/vbrazelton/origin-link).
+
+ Note: Handling various git providers is surprisingly tricky. Please include the following with any issue:
+  1. Push and Fetch URLs
+      * run `git remote show origin` in the root of your project
+  2. An example of a correct url for your remote repository
+      * Needed in order to validate correct output. No access to the remote repository is needed.
 
 ## License
 
