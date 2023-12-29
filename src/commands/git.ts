@@ -41,12 +41,33 @@ export const getGitOrigin = async (
       branch = branchStdout.toString().trim();
     }
 
+    if (origin.startsWith("https://")) {
+
+      const matches = origin.match(
+        /^(https?):\/\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\.]+)\.git$/
+        );
+
+        if (matches) {
+          const domain = matches[2];
+          const project = matches[4];
+          const repo = matches[5];
+          return {
+            origin: `https://${domain}/projects/${project}/repos/${repo}`,
+            branch,
+          };
+        } else {
+          vscode.window.showErrorMessage(
+            "Could not convert SSH origin to HTTPS."
+          );
+          return { origin: undefined, branch: undefined };
+        } 
+    }
+
     if (origin.startsWith("ssh://")) {
       // Convert SSH URL to HTTPS
       const matches = origin.match(
         /^ssh:\/\/git@([^:]+):([\d]+)\/([^\/]+)\/([^\.]+).git$/
       );
-      console.log("matches: ", matches);
 
       if (matches) {
         const domain = matches[1];
@@ -69,7 +90,6 @@ export const getGitOrigin = async (
       const matches = origin.match(/^git@([^:]+):([^\/]+)\/([^\/]+).git$/);
 
       if (matches) {
-        console.log("matches: ", matches);
         const domain = matches[1];
         const project = matches[2];
         const repo = matches[3];

@@ -51,7 +51,6 @@ export const createLink = (
 
   switch (gitOriginSource) {
     case "bitbucket.org":
-      console.log("urlParts: ", urlParts);
       return `${urlParts[0]}//${urlParts[1]}/${urlParts[2]}/${urlParts[3]}/src/${originInfo.headBranch}${originInfo.filePath}#${ranges}`;
     case "self-hosted-bitbucket":
       return `${urlParts[0]}//${urlParts[1]}/projects/${urlParts[3]}/${urlParts[4]}/${urlParts[5]}/browse${originInfo.filePath}#${ranges}`;
