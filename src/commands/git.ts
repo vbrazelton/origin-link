@@ -44,7 +44,7 @@ export const getGitOrigin = async (
     if (origin.startsWith("https://")) {
 
       const matches = origin.match(
-        /^(https?):\/\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\.]+)\.git$/
+        /^(https?):\/\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+?)\.git$/
         );
 
         if (matches) {
@@ -66,7 +66,7 @@ export const getGitOrigin = async (
     if (origin.startsWith("ssh://")) {
       // Convert SSH URL to HTTPS
       const matches = origin.match(
-        /^ssh:\/\/git@([^:]+):([\d]+)\/([^\/]+)\/([^\.]+).git$/
+        /^ssh:\/\/git@([^:]+):([\d]+)\/([^\/]+)\/(.+?)\.git$/
       );
 
       if (matches) {
@@ -87,7 +87,7 @@ export const getGitOrigin = async (
 
     if (origin.startsWith("git@")) {
       // Convert SSH URL to HTTPS
-      const matches = origin.match(/^git@([^:]+):([^\/]+)\/([^\/]+).git$/);
+      const matches = origin.match(/^git@([^:]+):([^\/]+)\/([^\/]+)\.git$/);
 
       if (matches) {
         const domain = matches[1];
