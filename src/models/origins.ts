@@ -1,1 +1,0 @@
-export type OriginSource = 'github' | 'bitbucket.org' | 'self-hosted-bitbucket' | 'gitlab' | 'custom';

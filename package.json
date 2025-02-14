@@ -15,17 +15,19 @@
     "Other"
   ],
   "icon": "assets/logo-thumbnail.png",
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "origin-link.openOriginLinkAtLine",
-        "title": "Open the Origin Link in a browser"
+        "command": "origin-link.getOriginLinkAtLine",
+        "title": "Copy Origin Link at Line"
       },
       {
-        "command": "origin-link.getOriginLinkAtLine",
-        "title": "Get Origin Link at Line"
+        "command": "origin-link.openOriginLinkAtLine",
+        "title": "Open Origin Link at Line"
       }
     ],
     "menus": {
@@ -52,6 +54,9 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "devDependencies": {
     "@types/chai": "^4.3.9",
     "@types/glob": "^8.1.0",
@@ -71,5 +76,8 @@
     "sinon": "^17.0.1",
     "sinon-chai": "^3.7.0",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.12"
   }
 }

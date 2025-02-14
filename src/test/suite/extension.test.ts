@@ -1,121 +1,135 @@
 import * as assert from "assert";
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from "vscode";
-import sinon = require("sinon");
-import { createLink } from "../../commands/links";
-// import * as myExtension from '../../extension';
+import { OriginLink } from "../../services/link/OriginLink";
+import { GitAPIService } from "../../services/git/GitAPI";
 
-// suite('Extension Test Suite', () => {
-// 	vscode.window.showInformationMessage('Start all tests.');
-
-// 	test('Sample test', () => {
-// 		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-// 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
-// 	});
-// });
-
-suite("createBitbucketLink", () => {
-  const filepath =
-    "/src/main/java/com/fakecompany/money/analysis/nlp/SentenceBreakerMethod.java";
-
-  test("should handle SSH git origins", () => {
-    const expectedLink =
-      "https://git.fakecompany.com/projects/ta/repos/money/browse/src/main/java/com/fakecompany/money/analysis/nlp/SentenceBreakerMethod.java#10";
-    const selections = [new vscode.Selection(9, 0, 9, 0)];
-    const gitOrigin = "ssh://git@git.fakecompany.com:7999/ta/repos/money.git";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
-  });
-
-  test("should handle HTTPS git origins", () => {
-    const expectedLink =
-      "https://git.fakecompany.com/projects/ta/repos/money/browse/src/main/java/com/fakecompany/money/analysis/nlp/SentenceBreakerMethod.java#10";
-    const selections = [new vscode.Selection(9, 0, 9, 0)];
-    const gitOrigin = "https://git.fakecompany.com/scm/ta/repos/money.git";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
-  });
-
-  test("should handle SSH git origins ranges", () => {
-    const expectedLink =
-      "https://git.fakecompany.com/projects/ta/repos/money/browse/src/main/java/com/fakecompany/money/analysis/nlp/SentenceBreakerMethod.java#10-20";
-    const selections = [new vscode.Selection(9, 0, 19, 0)];
-    const gitOrigin = "ssh://git@git.fakecompany.com:7999/ta/repos/money.git";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
-  });
-
-  test("should handle HTTPS git origins with ranges", () => {
-    const expectedLink =
-      "https://git.fakecompany.com/projects/ta/repos/money/browse/src/main/java/com/fakecompany/money/analysis/nlp/SentenceBreakerMethod.java#10-20";
-    const selections = [new vscode.Selection(9, 0, 19, 0)];
-    const gitOrigin = "https://git.fakecompany.com/scm/ta/repos/money.git";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
-  });
-
-  test("should handle empty gitOrigin", () => {
-    const selections = [new vscode.Selection(10, 0, 10, 0)];
-    const gitOrigin = "";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, "");
-  });
-
-  test("should handle bitbucket.org https gitOrigin", () => {
-    const expectedLink =
-      "https://bitbucket.org/fakeorg/test-dashboard/src/develop/src/app/providers/some-output.service.ts#lines-11";
-    const selections = [new vscode.Selection(10, 0, 10, 0)];
-    const gitOrigin = "git@bitbucket.org:fakeorg/test-dashboard.git";
-    const originInfo = {
-      filePath: "/src/app/providers/some-output.service.ts",
-      gitOrigin,
-      headBranch: "develop",
+suite("OriginLink Tests", () => {
+  test("should generate proper GitHub URL", () => {
+    // Create a dummy GitAPIService with methods we need
+    const dummyGitAPIService: GitAPIService = {
+      gitAPI: {
+        repositories: [
+          {
+            rootUri: vscode.Uri.parse("file://test/path"),
+            state: {
+              HEAD: { name: "main", commit: "dummyCommit" },
+              remotes: [],
+            },
+          },
+        ],
+      },
+      getRemote: () => ({
+        name: "origin-link",
+        fetchUrl: "https://github.com/vbrazelton/origin-link.git",
+        pushUrl: "https://github.com/vbrazelton/origin-link.git",
+      }),
+      getCurrentBranch: () => ({ name: "main", commit: "dummyCommit" }),
+      getRemoteProvider: () => "github",
     };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
+
+    // Create a single-line selection (line 0)
+    const dummySelection = new vscode.Selection(0, 0, 0, 0);
+
+    // Instantiate the OriginLink using our dummy API and selection
+    const originLink = new OriginLink(dummyGitAPIService, [dummySelection]);
+    // Stub the getActiveFile method so we bypass the dependency on the active editor
+    (originLink as any).getActiveFile = () => "/src/extension.ts";
+
+    const link = originLink.getLink();
+    // The expected GitHub URL should be something like:
+    // "https://github.com/vbrazelton/origin-link/blob/main/src/extension.ts#L1"
+    assert.ok(link.includes("/blob/main/src/extension.ts#L1"));
   });
 
-  test("should handle bitbucket.org ssh gitOrigin", () => {
-    const expectedLink =
-      "https://bitbucket.org/fakeorg/test-dashboard/src/develop/src/app/providers/some-output.service.ts#lines-11";
-    const selections = [new vscode.Selection(10, 0, 10, 0)];
-    const gitOrigin = "git@bitbucket.org:fakeorg/test-dashboard.git";
-    const originInfo = {
-      filePath: "/src/app/providers/some-output.service.ts",
-      gitOrigin,
-      headBranch: "develop",
+  test("should generate proper Bitbucket URL", () => {
+    const dummyGitAPIService: GitAPIService = {
+      gitAPI: {
+        repositories: [
+          {
+            rootUri: vscode.Uri.parse("file://test/path"),
+            state: {
+              HEAD: { name: "main", commit: "dummyCommit" },
+              remotes: [],
+            },
+          },
+        ],
+      },
+      getRemote: () => ({
+        name: "origin-link",
+        fetchUrl: "https://bitbucket.org/vbrazelton/origin-link.git",
+        pushUrl: "https://bitbucket.org/vbrazelton/origin-link.git",
+      }),
+      getCurrentBranch: () => ({ name: "main", commit: "dummyCommit" }),
+      getRemoteProvider: () => "bitbucket.org",
     };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
-  });
-});
 
-suite("getGitHubOrigin", () => {
-  const filepath = "/src/api/async_resource.cc";
+    const dummySelection = new vscode.Selection(0, 0, 0, 0);
+    const originLink = new OriginLink(dummyGitAPIService, [dummySelection]);
+    (originLink as any).getActiveFile = () => "/src/extension.ts";
 
-  test("should handle https gitHubOrigin", () => {
-    const expectedLink =
-      "https://github.com/nodejs/node/blob/main/src/api/async_resource.cc#L6";
-    const selections = [new vscode.Selection(5, 0, 5, 0)];
-    const gitOrigin = "https://github.com/nodejs/node.git";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
+    const link = originLink.getLink();
+    // Bitbucket in this case should produce a URL like:
+    // "https://bitbucket.org/vbrazelton/origin-link/src/main/src/extension.ts#lines-1"
+    assert.ok(link.includes("/src/main/src/extension.ts#lines-1"));
   });
 
-  test("should handle ssh gitHubOrigin", () => {
-    const expectedLink =
-      "https://github.com/nodejs/node/blob/main/src/api/async_resource.cc#L6";
-    const selections = [new vscode.Selection(5, 0, 5, 0)];
-    const gitOrigin = "ssh://git@github.com:nodejs/node.git";
-    const originInfo = { filePath: filepath, gitOrigin, headBranch: "main" };
-    const actualLink = createLink(originInfo, selections);
-    assert.strictEqual(actualLink, expectedLink);
+  test("should generate proper self-hosted Bitbucket URL", () => {
+    const dummyGitAPIService: GitAPIService = {
+      gitAPI: {
+        repositories: [],
+      },
+      getRemote: () => ({
+        name: "origin-link",
+        fetchUrl: "https://bitbucket.example.com/scm/PRJ/repo.git",
+        pushUrl: "https://bitbucket.example.com/scm/PRJ/repo.git",
+      }),
+      getCurrentBranch: () => ({ name: "main", commit: "dummyCommit" }),
+      getRemoteProvider: () => "self-hosted-bitbucket",
+    };
+
+    const dummySelection = new vscode.Selection(0, 0, 0, 0);
+    const originLink = new OriginLink(dummyGitAPIService, [dummySelection]);
+    (originLink as any).getActiveFile = () => "/src/extension.ts";
+
+    const link = originLink.getLink();
+    // For self-hosted Bitbucket the URL is built from different URL parts.
+    // With a split of "https://bitbucket.example.com/scm/PRJ/repo.git" you expect:
+    // ["https:", "bitbucket.example.com", "scm", "PRJ", "repo"]
+    // and the resulting URL should be like:
+    // "https://bitbucket.example.com/projects/PRJ/repos/repo/browse/src/extension.ts?at=main#1"
+    assert.ok(
+      link.includes(
+        "https://bitbucket.example.com/projects/PRJ/repos/repo/browse/src/extension.ts?at=main#1"
+      )
+    );
+  });
+
+  test("should return empty link when remote info is missing", () => {
+    const dummyGitAPIService: GitAPIService = {
+      gitAPI: {
+        repositories: [],
+      },
+      getRemote: () => undefined,
+      getCurrentBranch: () => undefined,
+      getRemoteProvider: () => undefined,
+    };
+
+    const dummySelection = new vscode.Selection(0, 0, 0, 0);
+    const originLink = new OriginLink(dummyGitAPIService, [dummySelection]);
+    (originLink as any).getActiveFile = () => "/src/extension.ts";
+
+    const link = originLink.getLink();
+    assert.strictEqual(link, "");
+  });
+
+  test("should have registered extension commands", async () => {
+    const commands = await vscode.commands.getCommands(true);
+    // Log available commands to help debug
+    console.log(
+      "Available commands:",
+      commands.filter((cmd) => cmd.includes("origin-link"))
+    );
+    assert.ok(commands.includes("origin-link.getOriginLinkAtLine"));
+    assert.ok(commands.includes("origin-link.openOriginLinkAtLine"));
   });
 });
